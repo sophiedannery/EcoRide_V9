@@ -10,3 +10,7 @@ Plateforme de covoiturage éco-responsable - backend Symfony
 - MySQL
 
 ## Installation
+
+## Initialisation de la base de données
+
+1. Créer la base :
