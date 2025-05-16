@@ -10,8 +10,10 @@
 				<div class="col-lg-7 text-center text-lg-start ">
 					<h1 class="display-4 fw-bold lh-1 text-white mb-3 ">Voyagez malin,<br>Voyages vert.</h1>
 				</div>
+
 				<div class="col-md-10 mx-auto col-lg-4">
-					<form method="GET" class="p-4 p-md-4 border rounded-3 bg-body-tertiary">
+
+					<form method="GET" action="{{ path('app_search') }}" class=" p-4 p-md-4 border rounded-3 bg-body-tertiary">
 						<div class="form-floating mb-3 ">
 							<input name="depart" type="text" class="form-control" required id="depart">
 							<label id="depart">Départ</label>
@@ -25,11 +27,12 @@
 							<label id="date">Date</label>
 						</div>
 
-
 						<button class="w-100 btn btn-lg btn-primary" type="submit">Rechercher</button>
 						<hr class="my-4">
 					</form>
+
 				</div>
+
 			</div>
 		</div>
 	</div>
