@@ -60,10 +60,15 @@ class TrajetRepository extends ServiceEntityRepository
                 DATE_FORMAT(t.date_depart, '%Y-%m-%d %H:%i') AS date_depart, 
                 t.prix,
                 t.places_restantes, 
-                u.pseudo AS chauffeur
+                u.pseudo AS chauffeur,
+                v.marque AS vehicule_marque,
+                v.modele AS vehicule_modele,
+                v.electrique AS vehicule_electrique
             FROM trajet AS t
             JOIN utilisateur AS u
                 ON t.chauffeur_id = u.id_utilisateur
+            JOIN vehicule as v 
+                ON t.vehicule_id = v.id_vehicule
             WHERE t.id_trajet = ?
         SQL;
 
