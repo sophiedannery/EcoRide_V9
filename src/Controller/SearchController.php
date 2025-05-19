@@ -42,10 +42,12 @@ final class SearchController extends AbstractController
         }
 
         $reviews = $repo->getTripReviews($id);
+        $preferences = $repo->getDriverPreferences($trip['chauffeur_id']);
 
         return $this->render('search/details.html.twig', [
             'trip' => $trip,
             'reviews' => $reviews,
+            'preferences' => $preferences,
         ]);
     }
 }

@@ -60,6 +60,7 @@ class TrajetRepository extends ServiceEntityRepository
                 DATE_FORMAT(t.date_depart, '%Y-%m-%d %H:%i') AS date_depart, 
                 t.prix,
                 t.places_restantes, 
+                u.id_utilisateur AS chauffeur_id,
                 u.pseudo AS chauffeur,
                 v.marque AS vehicule_marque,
                 v.modele AS vehicule_modele,
@@ -98,6 +99,23 @@ class TrajetRepository extends ServiceEntityRepository
         SQL;
 
         return $conn->executeQuery($sql, [$tripId])->fetchAllAssociative();
+    }
+
+    public function getDriverPreferences(int $chauffeurId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT p.libelle
+            FROM utilisateur_preference up 
+            JOIN preference p 
+                ON up.preference_id = p.id_preference
+            WHERE up.utilisateur_id = ?
+        SQL;
+
+        $rows = $conn->executeQuery($sql, [$chauffeurId])->fetchAllAssociative();
+
+        return array_column($rows, 'libelle');
     }
 
     //    /**

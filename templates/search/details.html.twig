@@ -83,7 +83,6 @@
 				{% if reviews is empty %}
 					<p>Aucun avis pour ce trajet</p>
 				{% else %}
-
 					{% for a in reviews %}
 						{{a.passager}}
 						: le
@@ -93,12 +92,20 @@
 						{% if a.commentaire %}
 							<p>{{a.commentaire}}</p>
 						{% endif %}
-
 					{% endfor %}
-
-
 				{% endif %}
+			</div>
 
+			<div>
+				<h3>Préférences de
+					{{ trip.chauffeur }}</h3>
+				{% if preferences is empty %}
+					<p>Aucune préférence renseignée par le chauffeur.</p>
+				{% else %}
+					{% for libelle in preferences %}
+						<p>{{ libelle }}</p>
+					{% endfor %}
+				{% endif %}
 			</div>
 
 
