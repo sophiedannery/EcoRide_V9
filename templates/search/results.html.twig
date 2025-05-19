@@ -5,37 +5,109 @@
 
 {% block body %}
 
-	<h2>Trajets de
-		{{ depart }}
-		à
-		{{ arrivee }}
-		le
-		{{ date|date('d/m/Y') }}</h2>
 
-	{% if rides is empty %}
-		<p class="alert alert-warning">Aucun trajet trouvé.</p>
+	{% if trajets is empty %}
+
+		<form method="GET" action="{{ path('app_search') }}" class=" p-4 p-md-4 border rounded-3 bg-body-tertiary">
+			<div class="form-floating mb-3 ">
+				<input name="depart" type="text" class="form-control" required id="depart" value="{{ app.request.query.get('depart') }}">
+				<label id="depart">Départ</label>
+			</div>
+			<div class="form-floating mb-3">
+				<input name="arrivee" type="text" class="form-control" required id="arrivee" value="{{ app.request.query.get('arrivee') }}">
+				<label id="arrivee">Arrivée</label>
+			</div>
+			<div class="form-floating mb-3">
+				<input name="date" type="date" class="form-control" required id="date" value="{{ app.request.query.get('date') }}">
+				<label id="date">Date</label>
+			</div>
+
+			<button class="w-100 btn btn-lg btn-primary" type="submit">
+				<i class="bi bi-search"></i>
+				Rechercher</button>
+			<hr class="my-4">
+		</form>
+
+		<div class="text-center m-5">
+
+			<h2>Aucun trajet trouvé</h2>
+
+		</div>
 	{% else %}
-		<ul class="list-group">
-			{% for ride in rides %}
-				<li class="list-group-item d-flex justify-content-between align-items-center">
-					<div>
-						<strong>{{ride.driver}}</strong>
-						-
-						{{ride.vehicle}}</div>
-					<div>
-						De
-						{{ride.depart}}
-						à
-						{{ride.arrivee}}
-						le
-						{{ride.date|date('d/m/Y')}}
+
+		<form method="GET" action="{{ path('app_search') }}" class=" p-4 p-md-4 border rounded-3 bg-body-tertiary">
+			<div class="form-floating mb-3 ">
+				<input name="depart" type="text" class="form-control" required id="depart" value="{{ app.request.query.get('depart') }}">
+				<label id="depart">Départ</label>
+			</div>
+			<div class="form-floating mb-3">
+				<input name="arrivee" type="text" class="form-control" required id="arrivee" value="{{ app.request.query.get('arrivee') }}">
+				<label id="arrivee">Arrivée</label>
+			</div>
+			<div class="form-floating mb-3">
+				<input name="date" type="date" class="form-control" required id="date" value="{{ app.request.query.get('date') }}">
+				<label id="date">Date</label>
+			</div>
+
+			<button class="w-100 btn btn-lg btn-primary" type="submit">
+				<i class="bi bi-search"></i>
+				Rechercher</button>
+			<hr class="my-4">
+		</form>
+
+
+		<div classe="row row-cols-1 row-cols-md-2 g-4">
+			{% for t in trajets %}
+				<div class="col m-5">
+
+					<div class="card h-100 shadow-sm">
+						<div class="card-body">
+							<h5 class="card-title">
+								<i class="bi bi-geo-fill text-success"></i>
+								{{t.adresse_depart}}
+								<i class="bi bi-arrow-right mx-1"></i>
+								<i class="bi bi-geo-alt-fill text-danger"></i>
+								{{t.adresse_arrivee}}
+							</h5>
+							<p class="card-text mb-2">
+								<i class="bi bi-calendar3"></i>
+								{{ t.date_depart|date('d/m/Y H:i') }}
+							</p>
+							<div class="d-flex justify-content-between align-items-center">
+								<span class="badge bg-success fs-5">
+									<i class="bi bi-coin"></i>
+									{{ t.prix }}
+									crédits
+
+
+								</span>
+								<span>
+									<i class="bi bi-people-fill"></i>
+									{{ t.places_restantes }}
+									place{{ t.places_restantes > 1 ? 's' }}
+								</span>
+								<span>
+									<i class="bi bi-person-circle"></i>
+									{{ t.chauffeur }}
+								</span>
+							</div>
+							<div class="card-footer bg-transparent border-top-0 text-center">
+								<a href="#" class="btn btn-outline-primary btn-sm">
+									Réserver
+								</a>
+							</div>
+						</div>
 					</div>
-					<div>{{ride.price}}€</div>
-					<a href="#" class="btn btn-sm btn-outline-primary">Voir le trajet</a>
-				</li>
+
+				</div>
+
 			{% endfor %}
-		</ul>
+		</div>
+
 	{% endif %}
 
-	<a href="/" class="btn btn-sm btn-primary">Retour à l'accueil</a>
+	<div class="text-center m-5">
+		<a class="btn btn-primary btn-lg px-4 me-md-2" href="/">Retour à l'accueil</a>
+	</div>
+
 {% endblock %}
