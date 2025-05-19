@@ -77,6 +77,29 @@ class TrajetRepository extends ServiceEntityRepository
         return $trip ?: [];
     }
 
+    public function getTripReviews(int $tripId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT  
+            a.note,
+            a.commentaire, 
+            DATE_FORMAT(a.date_creation, '%Y-%m-%d %H:%i') AS date_creation,
+            p.pseudo AS passager
+        FROM reservation r
+        JOIN avis a
+            ON r.id_reservation = a.reservation_id
+        JOIN utilisateur p 
+            ON r.passager_id = p.id_utilisateur
+        WHERE r.trajet_id = ?
+            AND a.statut_validation = 'valide'
+        ORDER BY a.date_creation DESC
+        SQL;
+
+        return $conn->executeQuery($sql, [$tripId])->fetchAllAssociative();
+    }
+
     //    /**
     //     * @return Trajet[] Returns an array of Trajet objects
     //     */

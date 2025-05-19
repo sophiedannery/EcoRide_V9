@@ -5,6 +5,30 @@
 
 {% block body %}
 
+
+	<div class="card text-center">
+		<div class="card-header">
+			Détails du trajet
+			{{ trip.chauffeur }}
+		</div>
+		<div class="card-body">
+			<h5 class="card-title">
+				<i class="bi bi-geo-fill text-success"></i>
+				{{trip.adresse_depart}}
+				<i class="bi bi-arrow-right mx-1"></i>
+				<i class="bi bi-geo-alt-fill text-danger"></i>
+				{{trip.adresse_arrivee}}</h5>
+			<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+			<p class="card-text">
+				<i class="bi bi-calendar3"></i>
+				{{ trip.date_depart|date('d/m/Y H:i') }}</p>
+			<a href="#" class="btn btn-primary">Go somewhere</a>
+		</div>
+		<div class="card-footer text-body-secondary">
+			2 days ago
+		</div>
+	</div>
+
 	<h2>
 		Détails du trajet
 		{{ trip.chauffeur }}</h2>
@@ -51,6 +75,33 @@
 				<p>Electrique :{{ trip.vehicule_electrique ? 'Oui' : 'Non' }}
 				</p>
 			</div>
+
+
+			<div>
+				<h3>Avis de
+					{{ trip.chauffeur }}</h3>
+				{% if reviews is empty %}
+					<p>Aucun avis pour ce trajet</p>
+				{% else %}
+
+					{% for a in reviews %}
+						{{a.passager}}
+						: le
+						{{ a.date_creation|date('d/m/Y H:i')}}. Note :
+						{{a.note}}/5
+
+						{% if a.commentaire %}
+							<p>{{a.commentaire}}</p>
+						{% endif %}
+
+					{% endfor %}
+
+
+				{% endif %}
+
+			</div>
+
+
 			<div class="card-footer bg-transparent border-top-0 text-center">
 				<a href="#" class="btn btn-outline-primary btn-sm">
 					Réserver ce trajet

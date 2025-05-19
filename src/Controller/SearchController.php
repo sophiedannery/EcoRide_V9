@@ -41,8 +41,11 @@ final class SearchController extends AbstractController
             throw $this->createNotFoundException("Trajet #$id introuvable");
         }
 
+        $reviews = $repo->getTripReviews($id);
+
         return $this->render('search/details.html.twig', [
             'trip' => $trip,
+            'reviews' => $reviews,
         ]);
     }
 }
