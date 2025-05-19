@@ -48,6 +48,30 @@ class TrajetRepository extends ServiceEntityRepository
         ])->fetchAllAssociative();
     }
 
+    public function findTripById(int $id): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+            SELECT  
+                t.id_trajet, 
+                t.adresse_depart, 
+                t.adresse_arrivee, 
+                DATE_FORMAT(t.date_depart, '%Y-%m-%d %H:%i') AS date_depart, 
+                t.prix,
+                t.places_restantes, 
+                u.pseudo AS chauffeur
+            FROM trajet AS t
+            JOIN utilisateur AS u
+                ON t.chauffeur_id = u.id_utilisateur
+            WHERE t.id_trajet = ?
+        SQL;
+
+        $trip = $conn->executeQuery($sql, [$id])->fetchAssociative();
+
+        return $trip ?: [];
+    }
+
     //    /**
     //     * @return Trajet[] Returns an array of Trajet objects
     //     */

@@ -31,4 +31,18 @@ final class SearchController extends AbstractController
             'trajets' => $trajets,
         ]);
     }
+
+    #[Route('/trajet/{id}', name: 'app_trajet_detail', requirements: ['id' => '\d+'])]
+    public function detail(int $id, TrajetRepository $repo): Response
+    {
+
+        $trip = $repo->findTripById($id);
+        if (empty($trip)) {
+            throw $this->createNotFoundException("Trajet #$id introuvable");
+        }
+
+        return $this->render('search/details.html.twig', [
+            'trip' => $trip,
+        ]);
+    }
 }
