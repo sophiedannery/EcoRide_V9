@@ -26,15 +26,27 @@ final class SearchController extends AbstractController
         $maxPriceParam = $request->query->get('maxPrice');
         $maxPrice = ($maxPriceParam !== null && $maxPriceParam !== '') ? (int) $maxPriceParam : null;
 
-        $maxDurParam = $request->query->get('maxDuration');
-        $maxDur = ($maxDurParam !== null && $maxDurParam !== '') ? (int) $maxDurParam : null;
+        // $maxDurParam = $request->query->get('maxDuration');
+        // $maxDur = ($maxDurParam !== null && $maxDurParam !== '') ? (int) $maxDurParam : null;
+
+        $durationTimeParam = $request->query->get('maxDurationTime');
+        if ($durationTimeParam !== null && $durationTimeParam !== '') {
+            $dt = \DateTime::createFromFormat('H:i', $durationTimeParam);
+            if ($dt) {
+                $maxDuration = ((int) $dt->format('H')) * 60 + ((int) $dt->format('i'));
+            } else {
+                $maxDuration = null;
+            }
+        } else {
+            $maxDuration = null;
+        }
 
         $minRatingParam = $request->query->get('minRating');
         $minRating = ($minRatingParam !== null && $minRatingParam !== '') ? (float) $minRatingParam : null;
 
 
 
-        $trajets = $repo->searchTrips($from, $to, $date, $eco, $maxPrice, $maxDur, $minRating);
+        $trajets = $repo->searchTrips($from, $to, $date, $eco, $maxPrice, $maxDuration, $minRating);
 
 
         return $this->render('search/results.html.twig', [
