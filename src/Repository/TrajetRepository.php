@@ -182,6 +182,32 @@ class TrajetRepository extends ServiceEntityRepository
         return isset($row['avg_rating']) && $row['avg_rating'] !== null ? (float) $row['avg_rating'] : null;
     }
 
+    public function findNextAvailableTripDate(string $from, string $to, \DateTimeInterface $date): ?\DateTimeImmutable
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT MIN(t.date_depart) AS next_date
+        FROM trajet t 
+        WHERE t.adresse_depart = ?
+            AND t.adresse_arrivee = ?
+            AND t.date_depart > ?
+            AND t.places_restantes > 0
+        SQL;
+
+        $row = $conn->executeQuery($sql, [
+            $from,
+            $to,
+            $date->format('Y-m-d H:i:s'),
+        ])->fetchAssociative();
+
+        if (empty($row['next_date'])) {
+            return null;
+        }
+
+        return new \DateTimeImmutable($row['next_date']);
+    }
+
     //    /**
     //     * @return Trajet[] Returns an array of Trajet objects
     //     */

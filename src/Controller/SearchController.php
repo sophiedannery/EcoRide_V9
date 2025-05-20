@@ -26,9 +26,6 @@ final class SearchController extends AbstractController
         $maxPriceParam = $request->query->get('maxPrice');
         $maxPrice = ($maxPriceParam !== null && $maxPriceParam !== '') ? (int) $maxPriceParam : null;
 
-        // $maxDurParam = $request->query->get('maxDuration');
-        // $maxDur = ($maxDurParam !== null && $maxDurParam !== '') ? (int) $maxDurParam : null;
-
         $durationTimeParam = $request->query->get('maxDurationTime');
         if ($durationTimeParam !== null && $durationTimeParam !== '') {
             $dt = \DateTime::createFromFormat('H:i', $durationTimeParam);
@@ -48,9 +45,15 @@ final class SearchController extends AbstractController
 
         $trajets = $repo->searchTrips($from, $to, $date, $eco, $maxPrice, $maxDuration, $minRating);
 
+        $nextDate = null;
+        if (empty($trajets)) {
+            $nextDate = $repo->findNextAvailableTripDate($from, $to, $date);
+        }
+
 
         return $this->render('search/results.html.twig', [
             'trajets' => $trajets,
+            'nextDate' => $nextDate,
         ]);
     }
 
