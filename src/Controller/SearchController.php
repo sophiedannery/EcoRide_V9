@@ -19,13 +19,22 @@ final class SearchController extends AbstractController
         $to = $request->query->get('arrivee', '');
         $date = new \DateTime($request->query->get('date', 'now'));
 
-        VarDumper::dump([
-            'from' => $from,
-            'to' => $to,
-            'date' => $date->format('Y-m-d'),
-        ]);
 
-        $trajets = $repo->searchTrips($from, $to, $date);
+        $ecoParam = $request->query->get('eco');
+        $eco = $ecoParam !== null;
+
+        $maxPriceParam = $request->query->get('maxPrice');
+        $maxPrice = ($maxPriceParam !== null && $maxPriceParam !== '') ? (int) $maxPriceParam : null;
+
+        $maxDurParam = $request->query->get('maxDuration');
+        $maxDur = ($maxDurParam !== null && $maxDurParam !== '') ? (int) $maxDurParam : null;
+
+        $minRatingParam = $request->query->get('minRating');
+        $minRating = ($minRatingParam !== null && $minRatingParam !== '') ? (float) $minRatingParam : null;
+
+
+
+        $trajets = $repo->searchTrips($from, $to, $date, $eco, $maxPrice, $maxDur, $minRating);
 
 
         return $this->render('search/results.html.twig', [

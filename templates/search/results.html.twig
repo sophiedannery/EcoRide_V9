@@ -5,61 +5,61 @@
 
 {% block body %}
 
+	<form method="GET" action="{{ path('app_search') }}" class=" p-4 p-md-4 border rounded-3 bg-body-tertiary">
+		<div class="form-floating mb-3 ">
+			<input name="depart" type="text" class="form-control" required id="depart" value="{{ app.request.query.get('depart') }}">
+			<label id="depart">Départ</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input name="arrivee" type="text" class="form-control" required id="arrivee" value="{{ app.request.query.get('arrivee') }}">
+			<label id="arrivee">Arrivée</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input name="date" type="date" class="form-control" required id="date" value="{{ app.request.query.get('date') }}">
+			<label id="date">Date</label>
+		</div>
+
+		<button class="w-100 btn btn-lg btn-primary" type="submit">
+			<i class="bi bi-search"></i>
+			Rechercher</button>
+		<hr class="my-4">
+
+		<div class="row gx-3 gy-2 align-items-end">
+			<div class="col-auto">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" name="eco" id="eco" {{ app.request.query.get('eco') ? 'checked' : '' }}>
+					<label class="form-check-label" for="eco">Voyage écologique</label>
+				</div>
+			</div>
+			<div class="col-auto">
+				<label for="maxPrice" class="form-label">Prix</label>
+				<input type="number" class="form-control" name="maxPrice" min="0" step="1" value="{{app.request.query.get('maxPrice') }}">
+			</div>
+			<div class="col-auto">
+				<label for="maxDuration" class="form-label">Durée max</label>
+				<input type="number" class="form-control" name="maxDuration" id="maxDuration" min="0" step="1" value="{{app.request.query.get('maxDuration') }}">
+			</div>
+			<div class="col-auto">
+				<label for="minRating" class="form-label">Note minimal</label>
+				<input type="number" class="form-control" name="minRating" id="minRating" min="0" max="5" step="0.5" value="{{app.request.query.get('minRating') }}">
+			</div>
+			<div class="col-auto">
+				<button type="submit" class="btn btn-outline-primary">Filtrer les résultats</button>
+			</div>
+		</div>
+	</form>
+
 
 	{% if trajets is empty %}
-
-		<form method="GET" action="{{ path('app_search') }}" class=" p-4 p-md-4 border rounded-3 bg-body-tertiary">
-			<div class="form-floating mb-3 ">
-				<input name="depart" type="text" class="form-control" required id="depart" value="{{ app.request.query.get('depart') }}">
-				<label id="depart">Départ</label>
-			</div>
-			<div class="form-floating mb-3">
-				<input name="arrivee" type="text" class="form-control" required id="arrivee" value="{{ app.request.query.get('arrivee') }}">
-				<label id="arrivee">Arrivée</label>
-			</div>
-			<div class="form-floating mb-3">
-				<input name="date" type="date" class="form-control" required id="date" value="{{ app.request.query.get('date') }}">
-				<label id="date">Date</label>
-			</div>
-
-			<button class="w-100 btn btn-lg btn-primary" type="submit">
-				<i class="bi bi-search"></i>
-				Rechercher</button>
-			<hr class="my-4">
-		</form>
-
 		<div class="text-center m-5">
-
 			<h2>Aucun trajet trouvé</h2>
-
 		</div>
+
 	{% else %}
-
-		<form method="GET" action="{{ path('app_search') }}" class=" p-4 p-md-4 border rounded-3 bg-body-tertiary">
-			<div class="form-floating mb-3 ">
-				<input name="depart" type="text" class="form-control" required id="depart" value="{{ app.request.query.get('depart') }}">
-				<label id="depart">Départ</label>
-			</div>
-			<div class="form-floating mb-3">
-				<input name="arrivee" type="text" class="form-control" required id="arrivee" value="{{ app.request.query.get('arrivee') }}">
-				<label id="arrivee">Arrivée</label>
-			</div>
-			<div class="form-floating mb-3">
-				<input name="date" type="date" class="form-control" required id="date" value="{{ app.request.query.get('date') }}">
-				<label id="date">Date</label>
-			</div>
-
-			<button class="w-100 btn btn-lg btn-primary" type="submit">
-				<i class="bi bi-search"></i>
-				Rechercher</button>
-			<hr class="my-4">
-		</form>
-
 
 		<div classe="row row-cols-1 row-cols-md-2 g-4">
 			{% for t in trajets %}
 				<div class="col m-5">
-
 					<div class="card h-100 shadow-sm">
 						<div class="card-body">
 							<h5 class="card-title">
@@ -85,7 +85,6 @@
 									{{ t.prix }}
 									crédits
 								</span>
-
 								<span>
 									<i class="bi bi-people-fill"></i>
 									{{ t.places_restantes }}
@@ -104,16 +103,12 @@
 								{% else %}
 									Pas encore de note pour ce chauffeur.
 								{% endif %}
-
-
 								{% if t.vehicule_electrique %}
 									<span class="badge bg-success fs-6">
 										<i class="bi bi-tree"></i>
 										Voyage écologique
 									</span>
 								{% endif %}
-
-
 							</div>
 							<div class="card-footer bg-transparent border-top-0 text-center">
 								<a href="{{path('app_trajet_detail', {id: t.id_trajet} ) }}" class="btn btn-outline-primary btn-sm">
@@ -122,12 +117,9 @@
 							</div>
 						</div>
 					</div>
-
 				</div>
-
 			{% endfor %}
 		</div>
-
 	{% endif %}
 
 	<div class="text-center m-5">

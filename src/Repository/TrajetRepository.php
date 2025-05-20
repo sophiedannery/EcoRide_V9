@@ -17,7 +17,7 @@ class TrajetRepository extends ServiceEntityRepository
     }
 
 
-    public function searchTrips(string $from, string $to, \DateTimeInterface $date): array
+    public function searchTrips(string $from, string $to, \DateTimeInterface $date, bool $eco = false, ?int $maxPrice = null, ?int $maxDuration = null, ?float $minRating = null): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -59,14 +59,36 @@ class TrajetRepository extends ServiceEntityRepository
             AND t.adresse_arrivee = ?
             AND DATE(t.date_depart) = ?
             AND t.places_restantes > 0
-        ORDER BY t.date_depart
         SQL;
 
-        return $conn->executeQuery($sql, [
+        $params = [
             $from,
             $to,
             $date->format('Y-m-d'),
-        ])->fetchAllAssociative();
+        ];
+
+        if ($eco) {
+            $sql .= " AND v.electrique = 1";
+        }
+
+        if ($maxPrice !== null) {
+            $sql .= " AND t.prix <= ?";
+            $params[] = $maxPrice;
+        }
+
+        if ($maxDuration !== null) {
+            $sql .= " AND TIMESTAMPDIFF(MINUTE, t.date_depart, t.date_arrivee) <= ?";
+            $params[] = $maxDuration;
+        }
+
+        if ($minRating !== null) {
+            $sql .= " AND COALESCE(ar.avg_rating, 0) >= ?";
+            $params[] = $minRating;
+        }
+
+        $sql .= " ORDER BY t.date_depart";
+
+        return $conn->executeQuery($sql, $params)->fetchAllAssociative();
     }
 
     public function findTripById(int $id): array
