@@ -30,9 +30,26 @@ class TrajetRepository extends ServiceEntityRepository
             DATE_FORMAT(t.date_depart, '%Y-%m-%d %H:%i') AS date_depart, 
             t.prix,
             t.places_restantes, 
-            u.pseudo AS chauffeur
+            u.pseudo AS chauffeur,
+            COALESCE(ar.avg_rating, 0) AS avg_rating
         FROM trajet AS t
-        JOIN utilisateur u ON t.chauffeur_id = u.id_utilisateur
+        JOIN utilisateur AS u 
+            ON t.chauffeur_id = u.id_utilisateur
+        
+        LEFT JOIN (
+            SELECT 
+                t2.chauffeur_id,
+                AVG(a.note) AS avg_rating
+            FROM reservation r2
+            JOIN avis a 
+                ON r2.id_reservation = a.reservation_id
+            JOIN trajet t2
+                ON r2.trajet_id = t2.id_trajet
+            WHERE a.statut_validation = 'valide'
+            GROUP BY t2.chauffeur_id 
+        ) AS ar 
+            ON ar.chauffeur_id = t.chauffeur_id 
+
         WHERE 
             t.adresse_depart = ?
             AND t.adresse_arrivee = ?

@@ -90,6 +90,11 @@
 									<i class="bi bi-person-circle"></i>
 									{{ t.chauffeur }}
 								</span>
+								<span>
+									<i class="bi bi-star-full"></i>
+									Note :
+									{{ t.avg_rating|round(1) }}/5
+								</span>
 							</div>
 							<div class="card-footer bg-transparent border-top-0 text-center">
 								<a href="{{path('app_trajet_detail', {id: t.id_trajet} ) }}" class="btn btn-outline-primary btn-sm">
