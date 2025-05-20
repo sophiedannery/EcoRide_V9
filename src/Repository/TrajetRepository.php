@@ -31,10 +31,13 @@ class TrajetRepository extends ServiceEntityRepository
             t.prix,
             t.places_restantes, 
             u.pseudo AS chauffeur,
-            COALESCE(ar.avg_rating, 0) AS avg_rating
+            COALESCE(ar.avg_rating, 0) AS avg_rating,
+            v.electrique AS vehicule_electrique
         FROM trajet AS t
         JOIN utilisateur AS u 
             ON t.chauffeur_id = u.id_utilisateur
+        JOIN vehicule as v 
+            ON t.vehicule_id = v.id_vehicule
         
         LEFT JOIN (
             SELECT 
