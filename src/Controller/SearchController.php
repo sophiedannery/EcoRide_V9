@@ -27,6 +27,7 @@ final class SearchController extends AbstractController
 
         $trajets = $repo->searchTrips($from, $to, $date);
 
+
         return $this->render('search/results.html.twig', [
             'trajets' => $trajets,
         ]);
@@ -43,11 +44,13 @@ final class SearchController extends AbstractController
 
         $reviews = $repo->getTripReviews($id);
         $preferences = $repo->getDriverPreferences($trip['chauffeur_id']);
+        $avgRating = $repo->getDriverAverageRating($trip['chauffeur_id']);
 
         return $this->render('search/details.html.twig', [
             'trip' => $trip,
             'reviews' => $reviews,
             'preferences' => $preferences,
+            'avgRating' => $avgRating,
         ]);
     }
 }

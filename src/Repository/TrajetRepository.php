@@ -118,6 +118,26 @@ class TrajetRepository extends ServiceEntityRepository
         return array_column($rows, 'libelle');
     }
 
+    public function getDriverAverageRating(int $chauffeurId): ?float
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT AVG(a.note) AS avg_rating
+        FROM reservation r 
+        JOIN avis a 
+            ON r.id_reservation = a.reservation_id
+        JOIN trajet t 
+            ON r.trajet_id = t.id_trajet
+        WHERE t.chauffeur_id = ?
+            AND a.statut_validation = 'valide'
+        SQL;
+
+        $row = $conn->executeQuery($sql, [$chauffeurId])->fetchAssociative();
+
+        return isset($row['avg_rating']) && $row['avg_rating'] !== null ? (float) $row['avg_rating'] : null;
+    }
+
     //    /**
     //     * @return Trajet[] Returns an array of Trajet objects
     //     */

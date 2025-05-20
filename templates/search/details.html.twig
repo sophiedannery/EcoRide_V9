@@ -5,121 +5,110 @@
 
 {% block body %}
 
+	<h2>
+		Détails du trajet
+		{{ trip.chauffeur }}</h2>
 
 	<div class="card text-center">
-		<div class="card-header">
-			Détails du trajet
-			{{ trip.chauffeur }}
-		</div>
+
+
 		<div class="card-body">
+
 			<h5 class="card-title">
 				<i class="bi bi-geo-fill text-success"></i>
 				{{trip.adresse_depart}}
 				<i class="bi bi-arrow-right mx-1"></i>
 				<i class="bi bi-geo-alt-fill text-danger"></i>
 				{{trip.adresse_arrivee}}</h5>
-			<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-			<p class="card-text">
+
+			<h6 class="card-subtitle mb-2 text-body-secondary">
 				<i class="bi bi-calendar3"></i>
+				Départ
 				{{ trip.date_depart|date('d/m/Y H:i') }}</p>
-			<a href="#" class="btn btn-primary">Go somewhere</a>
-		</div>
-		<div class="card-footer text-body-secondary">
-			2 days ago
-		</div>
-	</div>
-
-	<h2>
-		Détails du trajet
-		{{ trip.chauffeur }}</h2>
+		</h6>
 
 
-	<div class="card h-100 shadow-sm">
-		<div class="card-body">
-			<h5 class="card-title">
-				<i class="bi bi-geo-fill text-success"></i>
-				{{trip.adresse_depart}}
-				<i class="bi bi-arrow-right mx-1"></i>
-				<i class="bi bi-geo-alt-fill text-danger"></i>
-				{{trip.adresse_arrivee}}
-			</h5>
-			<p class="card-text mb-2">
-				<i class="bi bi-calendar3"></i>
-				{{ trip.date_depart|date('d/m/Y H:i') }}
-			</p>
-			<div class="d-flex justify-content-between align-items-center">
-				<span class="badge bg-success fs-5">
-					<i class="bi bi-coin"></i>
-					{{ trip.prix }}
-					crédits
+		<p class="card-text mb-2">
+			<i class="bi bi-coin"></i>
+			{{ trip.prix }}
+			crédits
+			<br>
+			<i class="bi bi-people-fill"></i>
+			{{ trip.places_restantes }}
+			place{{ trip.places_restantes > 1 ? 's' }}
+			restante{{ trip.places_restantes > 1 ? 's' }}
+		</p>
 
+		<div>
+			<diV>
+				<h6 class="cart-title">
+					A propos du chauffeur
+				</h6>
 
-				</span>
-				<span>
-					<i class="bi bi-people-fill"></i>
-					{{ trip.places_restantes }}
-					place{{ trip.places_restantes > 1 ? 's' }}
-				</span>
-				<span>
-					<i class="bi bi-person-circle"></i>
+				<p class="card-text mb-2">
+					Pseudo :
 					{{ trip.chauffeur }}
-				</span>
-			</div>
-			<div>
-				<h3>Véhicule de
-					{{ trip.chauffeur }}</h3>
-				<p>Marque :
-					{{ trip.vehicule_marque}}</p>
-				<p>Modele :
-					{{ trip.vehicule_modele}}</p>
-				<p>Electrique :{{ trip.vehicule_electrique ? 'Oui' : 'Non' }}
+					<br>
+
+					{% if avgRating is not null %}
+						Note moyenne :
+						{{ avgRating|round(1, 'floor' )}}/5
+					{% else %}
+						<p>Pas encore de note pour ce chauffeur</p>
+					{% endif %}
+					<br>
+
+					Avis :
+					{% if reviews is empty %}
+						Aucun avis pour ce chauffeur
+					{% else %}
+						{% for a in reviews %}
+							{{a.passager}}
+							: le
+							{{ a.date_creation|date('d/m/Y H:i')}}. Note :
+							{{a.note}}/5
+
+							{% if a.commentaire %}
+								{{a.commentaire}}
+							{% endif %}
+						{% endfor %}
+					{% endif %}
+					<br>
+
+					Préférences :
+					{% if preferences is empty %}
+						Aucune préférence renseignée par le chauffeur.
+					{% else %}
+						{% for libelle in preferences %}
+							{{ libelle }}
+						{% endfor %}
+					{% endif %}
 				</p>
 			</div>
 
 
-			<div>
-				<h3>Avis de
-					{{ trip.chauffeur }}</h3>
-				{% if reviews is empty %}
-					<p>Aucun avis pour ce trajet</p>
-				{% else %}
-					{% for a in reviews %}
-						{{a.passager}}
-						: le
-						{{ a.date_creation|date('d/m/Y H:i')}}. Note :
-						{{a.note}}/5
-
-						{% if a.commentaire %}
-							<p>{{a.commentaire}}</p>
-						{% endif %}
-					{% endfor %}
-				{% endif %}
+			<diV>
+				<h6 class="cart-title">
+					A propos du véhicule
+				</h6>
+				<p class="card-text mb-2">
+					<br>
+					Marque :
+					{{trip.vehicule_marque}}
+					<br>
+					Modèle :
+					{{trip.vehicule_modele}}
+					<br>
+					Electrique :{{ trip.vehicule_electrique ? 'Oui' : 'Non' }}
+				</p>
 			</div>
 
-			<div>
-				<h3>Préférences de
-					{{ trip.chauffeur }}</h3>
-				{% if preferences is empty %}
-					<p>Aucune préférence renseignée par le chauffeur.</p>
-				{% else %}
-					{% for libelle in preferences %}
-						<p>{{ libelle }}</p>
-					{% endfor %}
-				{% endif %}
-			</div>
-
-
-			<div class="card-footer bg-transparent border-top-0 text-center">
-				<a href="#" class="btn btn-outline-primary btn-sm">
-					Réserver ce trajet
-				</a>
-			</div>
 		</div>
-	</div>
 
 
-	<div class="text-center m-5">
-		<a class="btn btn-primary btn-lg px-4 me-md-2" href="/">Retour à l'accueil</a>
-	</div>
-
-{% endblock %}
+		<a href="#" class="btn btn-primary">Réserver ce trajet</a>
+	</p>
+</div>
+<div class="card-footer text-body-secondary">
+	Trajet posté le</div></div><div class="text-center m-5">
+<a class="btn btn-secondary btn-lg px-4 me-md-2" href="/">Retour à l'accueil</a></div>{% endblock %}
