@@ -16,9 +16,39 @@
 				<a href="#" class="nav-link px-2">CONTACT</a>
 			</li>
 		</ul>
-		<div class="col-md-3 text-end">
-			<button type="button" class="btn btn-outline-primary me-2">INSCRIPTION</button>
-			<button type="button" class="btn btn-primary">CONNEXION</button>
-		</div>
+		{% if is_granted('ROLE_ADMIN') %}
+			<div class="col-md-3 text-end">
+				<button type="button" class="btn btn-outline-primary me-2">
+					<a href="#">ADMIN</a>
+				</button>
+				<button type="button" class="btn btn-primary">
+					<a href=" {{ path( 'app_logout') }} ">DECONNEXION</a>
+				</button>
+			</div>
+
+		{% elseif app.user  %}
+
+			<div class="col-md-3 text-end">
+				<button type="button" class="btn btn-outline-primary me-2">
+					<a href="#">MON ESPACE</a>
+				</button>
+				<button type="button" class="btn btn-primary">
+					<a href=" {{ path( 'app_logout') }} ">DECONNEXION</a>
+				</button>
+			</div>
+
+
+		{% else %}
+			<div class="col-md-3 text-end">
+				<button type="button" class="btn btn-outline-primary me-2">
+					<a href="path">
+						<a href="{{ path( 'app_register') }}">INSCRIPTION</a>
+					</a>
+				</button>
+				<button type="button" class="btn btn-primary">
+					<a href=" {{ path( 'app_login') }}">CONNEXION</a>
+				</button>
+			</div>
+		{% endif %}
 	</header>
 </div>
