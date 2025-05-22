@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -38,6 +40,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?int $credits = null;
+
+    /**
+     * @var Collection<int, Preference>
+     */
+    #[ORM\ManyToMany(targetEntity: Preference::class, inversedBy: 'users')]
+    private Collection $preference;
+
+    public function __construct()
+    {
+        $this->preference = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -132,6 +145,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCredits(int $credits): static
     {
         $this->credits = $credits;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Preference>
+     */
+    public function getPreference(): Collection
+    {
+        return $this->preference;
+    }
+
+    public function addPreference(Preference $preference): static
+    {
+        if (!$this->preference->contains($preference)) {
+            $this->preference->add($preference);
+        }
+
+        return $this;
+    }
+
+    public function removePreference(Preference $preference): static
+    {
+        $this->preference->removeElement($preference);
 
         return $this;
     }
