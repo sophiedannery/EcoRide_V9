@@ -19,6 +19,7 @@ class RegistrationController extends AbstractController
         $user = new User();
 
         $user->setRoles(['ROLE_USER']);
+        $user->setCredits(20);
 
 
 
