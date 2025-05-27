@@ -16,4 +16,55 @@
 	</p>
 
 
+	<p>
+		Vous êtes :
+		{% if user.statut == 'passager'  %}
+			Passager
+			<br>
+			<a href="{{ path('app_account_become_chauffeur') }}" class="btn btn-outline-primary">Devenir chauffeur</a>
+
+		{% elseif user.statut == 'chauffeur' %}
+			Chauffeur
+
+		{% elseif user.statut == 'mixte' %}
+			Passager &amp; Chauffeur
+
+		{% else %}
+			Statut inconnu
+
+		{% endif %}
+	</p>
+
+
+	{# {% if user.vehicules %}
+			<h3>Vos véhicules</h3>
+			<ul>
+				{% for vehicule in user.vehicule %}
+	
+					<li>
+						{{vehicule.immatriculation }}
+						-
+						{{vehicule.marque }}
+						-
+						{{vehicule.modele }}</li>
+	
+				{% endfor %}
+			</ul>
+		{% endif %}
+	
+	
+		{% if user.preference %}
+			<h3>Vos préférences</h3>
+			<ul>
+				{% for p in user.preference %}
+	
+					<li>
+						{{p.libelle }}
+					</li>
+	
+				{% endfor %}
+			</ul>
+		{% endif %} #}
+
+
 {% endblock %}
