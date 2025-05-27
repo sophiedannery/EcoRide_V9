@@ -33,6 +33,9 @@ class Avis
     #[ORM\ManyToOne(inversedBy: 'avis')]
     private ?Utilisateur $employeValideur = null;
 
+    #[ORM\ManyToOne(inversedBy: 'avis')]
+    private ?User $validateur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,6 +109,18 @@ class Avis
     public function setEmployeValideur(?Utilisateur $employeValideur): static
     {
         $this->employeValideur = $employeValideur;
+
+        return $this;
+    }
+
+    public function getValidateur(): ?User
+    {
+        return $this->validateur;
+    }
+
+    public function setValidateur(?User $validateur): static
+    {
+        $this->validateur = $validateur;
 
         return $this;
     }

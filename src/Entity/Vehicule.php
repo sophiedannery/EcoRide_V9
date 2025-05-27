@@ -20,6 +20,14 @@ class Vehicule
     #[ORM\JoinColumn(nullable: false)]
     private ?Utilisateur $utilisateur = null;
 
+
+
+    #[ORM\ManyToOne(inversedBy: 'vehicules')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+
+
     #[ORM\Column(length: 255)]
     private ?string $immatriculation = null;
 
@@ -47,6 +55,8 @@ class Vehicule
     #[ORM\OneToMany(targetEntity: Trajet::class, mappedBy: 'vehicule')]
     private Collection $trajets;
 
+
+
     public function __construct()
     {
         $this->trajets = new ArrayCollection();
@@ -56,6 +66,8 @@ class Vehicule
     {
         return $this->id;
     }
+
+
 
     public function getUtilisateur(): ?Utilisateur
     {
@@ -68,6 +80,21 @@ class Vehicule
 
         return $this;
     }
+
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+
 
     public function getImmatriculation(): ?string
     {

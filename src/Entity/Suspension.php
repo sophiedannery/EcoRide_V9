@@ -28,6 +28,12 @@ class Suspension
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $motif = null;
 
+    #[ORM\ManyToOne(inversedBy: 'suspensions')]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'suspensions')]
+    private ?User $admini = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,6 +83,30 @@ class Suspension
     public function setMotif(?string $motif): static
     {
         $this->motif = $motif;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAdmini(): ?User
+    {
+        return $this->admini;
+    }
+
+    public function setAdmini(?User $admini): static
+    {
+        $this->admini = $admini;
 
         return $this;
     }

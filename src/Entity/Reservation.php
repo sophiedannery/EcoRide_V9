@@ -38,6 +38,9 @@ class Reservation
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'reservation')]
     private Collection $avis;
 
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    private ?User $passagers = null;
+
     public function __construct()
     {
         $this->avis = new ArrayCollection();
@@ -134,6 +137,18 @@ class Reservation
                 $avi->setReservation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPassagers(): ?User
+    {
+        return $this->passagers;
+    }
+
+    public function setPassagers(?User $passagers): static
+    {
+        $this->passagers = $passagers;
 
         return $this;
     }
