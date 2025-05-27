@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes trajets
+{% endblock %}
+
+{% block body %}
+	<h1>Mon historique des covoiturages</h1>
+
+	{% if reservations is empty %}
+		<p>Aucune réservation trouvée.</p>
+	{% else %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Trajet</th>
+					<th>Rôle</th>
+					<th>Date départ</th>
+					<th>Réservé le</th>
+					<th>Statut</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for res in reservations %}
+					<tr>
+						<td>
+							{{ res.trajet.adresseDepart }}
+							→
+							{{ res.trajet.adresseArrivee }}
+						</td>
+						<td>
+							{% if res.passagers.id == app.user.id %}
+								Passager
+							{% else %}
+								Chauffeur
+							{% endif %}
+						</td>
+						<td>{{ res.trajet.dateDepart|date('d/m/Y H:i') }}</td>
+						<td>{{ res.dateConfirmation|date('d/m/Y H:i') }}</td>
+						<td>{{ res.statut }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+
+{% endblock %}

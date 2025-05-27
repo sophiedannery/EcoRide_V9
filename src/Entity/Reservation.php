@@ -12,7 +12,7 @@ class Reservation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(name: "id_reservation", type: "integer")]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
