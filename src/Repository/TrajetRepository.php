@@ -208,6 +208,215 @@ class TrajetRepository extends ServiceEntityRepository
         return new \DateTimeImmutable($row['next_date']);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function searchTrips2(string $from, string $to, \DateTimeInterface $date, bool $eco = false, ?int $maxPrice = null, ?int $maxDuration = null, ?float $minRating = null): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+
+        SELECT
+            t.id_trajet, 
+            t.adresse_depart, 
+            t.adresse_arrivee, 
+            DATE_FORMAT(t.date_depart, '%Y-%m-%d %H:%i') AS date_depart, 
+            DATE_FORMAT(t.date_arrivee, '%Y-%m-%d %H:%i') AS date_arrivee, 
+            t.prix,
+            t.places_restantes, 
+            u.pseudo AS chauffeurs,
+            COALESCE(ar.avg_rating, 0) AS avg_rating,
+            v.electrique AS vehicule_electrique
+        FROM trajet AS t
+        JOIN user AS u 
+            ON t.chauffeurs_id = u.id
+        JOIN vehicule as v 
+            ON t.vehicule_id = v.id_vehicule
+        
+        LEFT JOIN (
+            SELECT 
+                t2.chauffeurs_id,
+                AVG(a.note) AS avg_rating
+            FROM reservation r2
+            JOIN avis a 
+                ON r2.id_reservation = a.reservation_id
+            JOIN trajet t2
+                ON r2.trajet_id = t2.id_trajet
+            WHERE a.statut_validation = 'valide'
+            GROUP BY t2.chauffeurs_id 
+        ) AS ar 
+            ON ar.chauffeurs_id = t.chauffeurs_id 
+
+        WHERE 
+            t.adresse_depart = ?
+            AND t.adresse_arrivee = ?
+            AND DATE(t.date_depart) = ?
+            AND t.places_restantes > 0
+        SQL;
+
+        $params = [
+            $from,
+            $to,
+            $date->format('Y-m-d'),
+        ];
+
+        if ($eco) {
+            $sql .= " AND v.electrique = 1";
+        }
+
+        if ($maxPrice !== null) {
+            $sql .= " AND t.prix <= ?";
+            $params[] = $maxPrice;
+        }
+
+        if ($maxDuration !== null) {
+            $sql .= " AND TIMESTAMPDIFF(MINUTE, t.date_depart, t.date_arrivee) <= ?";
+            $params[] = $maxDuration;
+        }
+
+        if ($minRating !== null) {
+            $sql .= " AND COALESCE(ar.avg_rating, 0) >= ?";
+            $params[] = $minRating;
+        }
+
+        $sql .= " ORDER BY t.date_depart";
+
+        return $conn->executeQuery($sql, $params)->fetchAllAssociative();
+    }
+
+    public function findTripById2(int $id): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+            SELECT  
+                t.id_trajet, 
+                t.adresse_depart, 
+                t.adresse_arrivee, 
+                DATE_FORMAT(t.date_depart, '%Y-%m-%d %H:%i') AS date_depart, 
+                DATE_FORMAT(t.date_arrivee, '%Y-%m-%d %H:%i') AS date_arrivee, 
+                t.prix,
+                t.places_restantes, 
+                u.id AS chauffeurs_id,
+                u.pseudo AS chauffeurs,
+                v.marque AS vehicule_marque,
+                v.modele AS vehicule_modele,
+                v.electrique AS vehicule_electrique
+            FROM trajet AS t
+            JOIN user AS u
+                ON t.chauffeurs_id = u.id
+            JOIN vehicule as v 
+                ON t.vehicule_id = v.id_vehicule
+            WHERE t.id_trajet = ?
+        SQL;
+
+        $trip = $conn->executeQuery($sql, [$id])->fetchAssociative();
+
+        return $trip ?: [];
+    }
+
+    public function getTripReviews2(int $tripId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT  
+            a.note,
+            a.commentaire, 
+            DATE_FORMAT(a.date_creation, '%Y-%m-%d %H:%i') AS date_creation,
+            p.pseudo AS passagers
+        FROM reservation r
+        JOIN avis a
+            ON r.id_reservation = a.reservation_id
+        JOIN user p 
+            ON r.passagers_id = p.id
+        WHERE r.trajet_id = ?
+            AND a.statut_validation = 'valide'
+        ORDER BY a.date_creation DESC
+        SQL;
+
+        return $conn->executeQuery($sql, [$tripId])->fetchAllAssociative();
+    }
+
+    public function getDriverPreferences2(int $chauffeursId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT p.libelle
+            FROM user_preference up 
+            JOIN preference p 
+                ON up.preference_id = p.id_preference
+            WHERE up.user_id = ?
+        SQL;
+
+        $rows = $conn->executeQuery($sql, [$chauffeursId])->fetchAllAssociative();
+
+        return array_column($rows, 'libelle');
+    }
+
+    public function getDriverAverageRating2(int $chauffeursId): ?float
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT AVG(a.note) AS avg_rating
+        FROM reservation r 
+        JOIN avis a 
+            ON r.id_reservation = a.reservation_id
+        JOIN trajet t 
+            ON r.trajet_id = t.id_trajet
+        WHERE t.chauffeurs_id = ?
+            AND a.statut_validation = 'valide'
+        SQL;
+
+        $row = $conn->executeQuery($sql, [$chauffeursId])->fetchAssociative();
+
+        return isset($row['avg_rating']) && $row['avg_rating'] !== null ? (float) $row['avg_rating'] : null;
+    }
+
+    public function findNextAvailableTripDate2(string $from, string $to, \DateTimeInterface $date): ?\DateTimeImmutable
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT MIN(t.date_depart) AS next_date
+        FROM trajet t 
+        WHERE t.adresse_depart = ?
+            AND t.adresse_arrivee = ?
+            AND t.date_depart > ?
+            AND t.places_restantes > 0
+        SQL;
+
+        $row = $conn->executeQuery($sql, [
+            $from,
+            $to,
+            $date->format('Y-m-d H:i:s'),
+        ])->fetchAssociative();
+
+        if (empty($row['next_date'])) {
+            return null;
+        }
+
+        return new \DateTimeImmutable($row['next_date']);
+    }
+
     //    /**
     //     * @return Trajet[] Returns an array of Trajet objects
     //     */

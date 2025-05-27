@@ -7,7 +7,7 @@
 
 	<h2>
 		Détails du trajet
-		{{ trip.chauffeur }}</h2>
+		{{ trip.chauffeurs }}</h2>
 
 	<div class="card text-center">
 
@@ -51,12 +51,12 @@
 	<div>
 		<diV>
 			<h6 class="cart-title">
-				A propos du chauffeur
+				A propos du chauffeurs
 			</h6>
 
 			<p class="card-text mb-2">
 				Pseudo :
-				{{ trip.chauffeur }}
+				{{ trip.chauffeurs }}
 				<br>
 
 				{% if avgRating is not null %}
@@ -72,7 +72,7 @@
 					Aucun avis pour ce chauffeur
 				{% else %}
 					{% for a in reviews %}
-						{{a.passager}}
+						{{a.passagers}}
 						: le
 						{{ a.date_creation|date('d/m/Y H:i')}}. Note :
 						{{a.note}}/5
